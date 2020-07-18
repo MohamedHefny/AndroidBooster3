@@ -3,9 +3,8 @@ package com.example.booster3apps.ui.main
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.booster3apps.R
-import com.example.booster3apps.models.Movie
-import com.example.booster3apps.repositories.MoviesRepository
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -16,10 +15,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mainViewModel.getMovies(object : MoviesRepository.MoviesCallback {
-            override fun onMoviesReady(movies: List<Movie>) {
-                    main_recycler.adapter = MoviesAdapter(movies)
-            }
+        mainViewModel.getMovies().observe(this, Observer {
+            main_recycler.adapter = MoviesAdapter(it)
         })
+
     }
 }

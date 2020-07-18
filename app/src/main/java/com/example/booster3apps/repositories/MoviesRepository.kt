@@ -1,6 +1,8 @@
 package com.example.booster3apps.repositories
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.booster3apps.models.Movie
 import com.example.booster3apps.models.MovieResponse
 import com.example.booster3apps.network.ApiService
@@ -19,11 +21,12 @@ object MoviesRepository {
 
     private val moviesList: MutableList<Movie> = mutableListOf()
 
-    fun getMovies(moviesCallback: MoviesCallback) {
+    fun getMovies(): LiveData<List<Movie>> {
+        val moviesListLiveData: MutableLiveData<List<Movie>> = MutableLiveData()
 
         if (moviesList.size > 0) {
-            moviesCallback.onMoviesReady(moviesList)
-            return
+            moviesListLiveData.postValue(moviesList)
+            return moviesListLiveData
         }
 
         apiService.getMovies(apiKey).enqueue(object : Callback<MovieResponse> {
@@ -33,7 +36,7 @@ object MoviesRepository {
                 if (response.isSuccessful) {
                     val remoteMoviesList: List<Movie> = response.body()?.results ?: listOf()
                     moviesList.addAll(remoteMoviesList)
-                    moviesCallback.onMoviesReady(moviesList)
+                    moviesListLiveData.postValue(moviesList)
                 }
             }
 
@@ -42,11 +45,7 @@ object MoviesRepository {
             }
 
         })
-    }
 
-
-    //**********************************************************************************************
-    interface MoviesCallback {
-        fun onMoviesReady(movies: List<Movie>)
+        return moviesListLiveData
     }
 }
