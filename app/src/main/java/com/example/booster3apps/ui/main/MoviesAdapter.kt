@@ -1,9 +1,10 @@
-package com.example.booster3apps
+package com.example.booster3apps.ui.main
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.booster3apps.R
 import com.example.booster3apps.models.Movie
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_movie.view.*

@@ -1,12 +1,10 @@
 package com.example.booster3apps.repositories
 
 import android.util.Log
-import com.example.booster3apps.MoviesAdapter
 import com.example.booster3apps.models.Movie
 import com.example.booster3apps.models.MovieResponse
 import com.example.booster3apps.network.ApiService
 import com.example.booster3apps.network.RetrofitClient
-import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,6 +43,7 @@ object MoviesRepository {
 
         })
     }
+
 
     //**********************************************************************************************
     interface MoviesCallback {
