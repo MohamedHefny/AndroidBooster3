@@ -1,8 +1,10 @@
 package com.example.booster3apps.repositories
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.booster3apps.database.AppDatabase
 import com.example.booster3apps.models.Movie
 import com.example.booster3apps.models.MovieResponse
 import com.example.booster3apps.network.ApiService
@@ -14,6 +16,8 @@ import retrofit2.Response
 object MoviesRepository {
 
     private val tag: String = MoviesRepository::class.java.simpleName
+
+    private lateinit var dataBase: AppDatabase
 
     private val apiService = RetrofitClient.getClient().create(ApiService::class.java)
 
@@ -27,6 +31,9 @@ object MoviesRepository {
         if (moviesList.size > 0) {
             moviesListLiveData.postValue(moviesList)
             return moviesListLiveData
+        } else if (getLocalMovies().isNotEmpty()) {
+            moviesList.addAll(getLocalMovies())
+            moviesListLiveData.postValue(moviesList)
         }
 
         apiService.getMovies(apiKey).enqueue(object : Callback<MovieResponse> {
@@ -36,6 +43,7 @@ object MoviesRepository {
                 if (response.isSuccessful) {
                     val remoteMoviesList: List<Movie> = response.body()?.results ?: listOf()
                     moviesList.addAll(remoteMoviesList)
+                    dataBase.getMoviesDao().insertAll(moviesList)
                     moviesListLiveData.postValue(moviesList)
                 }
             }
@@ -47,5 +55,13 @@ object MoviesRepository {
         })
 
         return moviesListLiveData
+    }
+
+    private fun getLocalMovies(): List<Movie> {
+        return dataBase.getMoviesDao().getAllMovies()
+    }
+
+    fun createDatabase(context: Context) {
+        dataBase = AppDatabase.getDatabase(context)
     }
 }

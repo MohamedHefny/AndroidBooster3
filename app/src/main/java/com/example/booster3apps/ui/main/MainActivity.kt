@@ -19,5 +19,6 @@ class MainActivity : AppCompatActivity() {
             main_recycler.adapter = MoviesAdapter(it)
         })
 
+
     }
 }
